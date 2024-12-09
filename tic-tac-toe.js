@@ -39,3 +39,26 @@ const gameBoard = (function () {
 
     return {setPositionO, setPositionX, checkWin, getCurrGame};
 })();
+
+const Player = function (mark) {
+    
+    getMark = () => mark;
+
+    setPosition = function (mark) {
+        if(mark == 'o') gameBoard.setPositionO(x,y);
+        else gameBoard.setPositionX(x,y);
+    }
+    
+    return {getMark, setPosition};
+}
+
+const player1 = Player('x');
+const player2 = Player('o');
+let activePlayer = player1;
+
+document.querySelectorAll('.square').forEach((square) =>
+    square.addEventListener('click',function() {
+    this.className = this.className + ` ${activePlayer.getMark()}`;
+    activePlayer = activePlayer == player1 ? player2 : player1;
+    }
+));
