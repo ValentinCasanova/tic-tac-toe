@@ -3,6 +3,28 @@
 // Wraps a gameboard factory function inside of IIFE
 const gameBoard = (function () {
     const board = [[0,0,0],[0,0,0],[0,0,0]];
+    let start = false;
+    const startGame =  document.querySelector('.startGame');
+    const resetGame = document.querySelector('.resetGame');
+    const players = document.querySelector('.players');
+    startGame.addEventListener('click', function () {
+        start = true;
+        this.className = `${this.className} none`;
+        resetGame.className = 'resetGame';
+        document.querySelector('.player1Wins').className += ' none';
+        document.querySelector('.player2Wins').className += ' none';
+        document.querySelector('.draw').className += ' none';
+    })
+
+    resetGame.addEventListener('click', function () {
+        start = true;
+        this.className = `${this.className} none`;
+        startGame.className = 'startGame';
+        document.querySelector('.players').className = '.players';
+        gameBoard.resetBoard();
+    })
+
+    const getStatus = () => start;
     const setPositionX = (x,y) => board[x][y] = 'x';
     const setPositionO = (x,y) => board[x][y] = 'o';
 
@@ -12,7 +34,6 @@ const gameBoard = (function () {
         // check all in one row win
         for(let row of board){
             if(row[0] == player && row[1] == player && row[2] == player){
-                console.log('here');
                 return true;
             }
         }
@@ -31,24 +52,58 @@ const gameBoard = (function () {
         diagonal1 = diagonal1.filter((elem) => elem == player);
         diagonal2 = diagonal2.filter((elem) => elem == player);
         if(diagonal1.length == 3 || diagonal2.length == 3){
-            console.log('here');
             return true;
         }
         return false;
     }
 
-    return {setPositionO, setPositionX, checkWin, getCurrGame};
+    const checkDraw = () =>{
+        if(!checkWin('x') && !checkWin('o')){
+            console.log('here');
+            for(let row of board){
+                for(let col of row){
+                    if(col == 0) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    const resetBoard = () =>{
+        board.forEach((row)=> row.fill(0));
+        document.querySelectorAll('.square').forEach((square)=>{
+            const name = square.className.split(' ');
+            square.className = `${name[0]} ${name[1]}`;
+        })
+    }
+
+    const announceWinner = (mark) =>{
+        players.className += ' none';
+        if(mark == 'x'){
+            document.querySelector('.player1Wins').className = 'player1Wins';
+        }else{
+            document.querySelector('.player2Wins').className = 'player1Wins';
+        }
+        start = false;
+    }
+
+    const announceDraw = () => {
+        document.querySelector('#players').className += ' none';
+        document.querySelector('.draw').className = 'draw';
+        start = false;
+    }
+
+    return {setPositionO, setPositionX, checkWin, getCurrGame, resetBoard, getStatus, checkDraw, announceWinner, announceDraw};
 })();
 
 const Player = function (mark) {
-    
     getMark = () => mark;
 
-    setPosition = function (mark) {
+    setPosition = function (x,y) {
         if(mark == 'o') gameBoard.setPositionO(x,y);
         else gameBoard.setPositionX(x,y);
     }
-    
+
     return {getMark, setPosition};
 }
 
@@ -58,7 +113,21 @@ let activePlayer = player1;
 
 document.querySelectorAll('.square').forEach((square) =>
     square.addEventListener('click',function() {
+    // Get Current Clicked Square Position
+    const position = this.className.split(' ')[1].split('').map((pos) => Number(pos));
+    // Check if current square is available
+    if(gameBoard.getCurrGame()[position[0]][position[1]] != 0 || !gameBoard.getStatus()) return;
+    
+    // Mark Square
     this.className = this.className + ` ${activePlayer.getMark()}`;
+    activePlayer.setPosition(position[0], position[1]);
     activePlayer = activePlayer == player1 ? player2 : player1;
+
+    // check win or draw
+    if(gameBoard.checkWin(activePlayer.getMark())) {
+        gameBoard.announceWinner(activePlayer.getMark());
+        return;
+    }
+    if(gameBoard.checkDraw()) gameBoard.announceDraw();
     }
 ));

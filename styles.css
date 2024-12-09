@@ -1,28 +1,65 @@
 html, body, h1, h2, p, div{
     padding: 0;
     margin: 0;
+    
 }
-
+button:hover{
+    cursor:pointer;
+}
 body{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
 }
 
-.board{
+.title{
     display: grid;
-    border: solid black 1px;
+    grid-template-rows: repeat(2, 1fr);
+    align-items: center;
+    margin-top: 3vh;
+    width: 30vw;
+    height: 10vw;
+}
+
+.title h1{
+    font-size: 5em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title div{
+    display:flex;
+    justify-content: center;
+}
+.title button{
+    border:solid black 3px;
+    border-radius: 10px;
+    font-size:2em;
+    background-color: white;
+    height: 5vh;
+    width: 15vh;
+}
+
+.players{
+    display:flex;
+    justify-content: space-evenly;
+    gap: 2em;
+}
+.none{
+    display: none;
+}
+.board{
+    margin-top: 3em;
+    display: grid;
+    width: 30vw;
+    height: 30vw;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
 
 .square{
-    background-color: pink;
-    border: solid blue 1px;
-    width: 20em;
-    height: 20em;
     background-size: 15em;
     background-position: center;
     background-repeat: no-repeat;
@@ -36,3 +73,18 @@ body{
 .square.o{
     background-image: url('assets/o.png');
 }
+
+.square:nth-child(1), .square:nth-child(4), .square:nth-child(2),.square:nth-child(5){
+    border-bottom: solid black 5px;
+    border-right: solid black 5px;
+}
+
+.square:nth-child(7), .square:nth-child(8){
+    border-right: solid black 5px;
+}
+
+.square:nth-child(3), .square:nth-child(6){
+    border-bottom: solid black 5px;
+}
+
+
