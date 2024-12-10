@@ -17,10 +17,12 @@ const gameBoard = (function () {
     })
 
     resetGame.addEventListener('click', function () {
-        start = true;
         this.className = `${this.className} none`;
         startGame.className = 'startGame';
-        document.querySelector('.players').className = '.players';
+        document.querySelector('.players').className = 'players';
+        document.querySelector('.player1Wins').className = 'player1Wins none';
+        document.querySelector('.player2Wins').className = 'player2Wins none';
+        document.querySelector('.draw').className = 'draw none';
         gameBoard.resetBoard();
     })
 
@@ -59,7 +61,6 @@ const gameBoard = (function () {
 
     const checkDraw = () =>{
         if(!checkWin('x') && !checkWin('o')){
-            console.log('here');
             for(let row of board){
                 for(let col of row){
                     if(col == 0) return false;
@@ -82,13 +83,13 @@ const gameBoard = (function () {
         if(mark == 'x'){
             document.querySelector('.player1Wins').className = 'player1Wins';
         }else{
-            document.querySelector('.player2Wins').className = 'player1Wins';
+            document.querySelector('.player2Wins').className = 'player2Wins';
         }
         start = false;
     }
 
     const announceDraw = () => {
-        document.querySelector('#players').className += ' none';
+        document.querySelector('.players').className += ' none';
         document.querySelector('.draw').className = 'draw';
         start = false;
     }
@@ -121,7 +122,7 @@ document.querySelectorAll('.square').forEach((square) =>
     // Mark Square
     this.className = this.className + ` ${activePlayer.getMark()}`;
     activePlayer.setPosition(position[0], position[1]);
-    activePlayer = activePlayer == player1 ? player2 : player1;
+    
 
     // check win or draw
     if(gameBoard.checkWin(activePlayer.getMark())) {
@@ -129,5 +130,6 @@ document.querySelectorAll('.square').forEach((square) =>
         return;
     }
     if(gameBoard.checkDraw()) gameBoard.announceDraw();
+    activePlayer = activePlayer == player1 ? player2 : player1;
     }
 ));
